@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < (argc-2) / 2; i++) {
 		icode[i] = atoi(argv[2 + (i * 2)]);
 		if (icode[i] < 1)
-			return fail(2, sprintf(err, "excepted non-null positive number, got %s", argv[2 + i]));
+			return fail(2, sprintf(err, "excepted non-null positive number, got %s", argv[2 + (i * 2)]));
 
 		strcat(cmd[i], "ubuntu-app-launch ");
 		strncat(cmd[i], argv[3 + (i * 2)], 4096);
@@ -63,8 +63,10 @@ int main(int argc, char* argv[]) {
 		if (ev.value != 1)
 			continue;
 		for (int i = 0; i < (argc-2) / 2; i++) {
-			if (ev.code == icode[i] && fork() == 0)
+			if (ev.code == icode[i] && fork() == 0) {
 				system(cmd[i]);
+				return 0;
+			}
 		}
 	}
 }
