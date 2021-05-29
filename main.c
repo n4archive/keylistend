@@ -16,6 +16,11 @@
 
 char err[200];
 int fd = 0;
+#ifdef NOUT
+#define RUNTIME "sh"
+#else
+#define RUNTIME "ubuntu-app-launch"
+#endif
 
 int fail(int returncode, int ignored) {
 	printf("keylistend: %s\n", err);
@@ -64,7 +69,7 @@ int main(int argc, char* argv[]) {
 			continue;
 		for (int i = 0; i < (argc-2) / 2; i++) {
 			if (ev.code == icode[i] && fork() == 0) {
-				execlp("ubuntu-app-launch", "ubuntu-app-launch", cmd[i], (char*)NULL);
+				execlp(RUNTIME, RUNTIME, cmd[i], (char*)NULL);
 				return fail(5, sprintf(err, "Warning: execlp() returned %i", errno));
 			}
 		}
