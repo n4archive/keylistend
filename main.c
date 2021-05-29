@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #define HELP_TEXT "keylistend v0.1.0\n" \
 	"Simple daemon to listen to event devices and react to keycodes with UT app launches.\n" \
@@ -31,14 +32,13 @@ int main(int argc, char* argv[]) {
 	if ((argc-1) % 2 == 0 || argc < 4)
 		return fail(1, sprintf(err, "got %i arguments, excepted multiple of 2 plus one", argc-1));
 
-	char cmd[(argc-2) / 2][sizeof("ubuntu-app-launch ") + 4096];
+	char cmd[(argc-2) / 2][4096];
 	int icode[(argc-2) / 2];
 	for (int i = 0; i < (argc-2) / 2; i++) {
 		icode[i] = atoi(argv[2 + (i * 2)]);
 		if (icode[i] < 1)
 			return fail(2, sprintf(err, "excepted non-null positive number, got %s", argv[2 + (i * 2)]));
 
-		strcat(cmd[i], "ubuntu-app-launch ");
 		strncat(cmd[i], argv[3 + (i * 2)], 4096);
 	}
 
@@ -64,8 +64,8 @@ int main(int argc, char* argv[]) {
 			continue;
 		for (int i = 0; i < (argc-2) / 2; i++) {
 			if (ev.code == icode[i] && fork() == 0) {
-				system(cmd[i]);
-				return 0;
+				execlp("ubuntu-app-launch", "ubuntu-app-launch", cmd[i], (char*)NULL);
+				return fail(5, sprintf(err, "Warning: execlp() returned %i", errno));
 			}
 		}
 	}
