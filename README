@@ -1,0 +1,10 @@
+KeyListen daemon
+
+Prototype for Ubuntu Touch to listen for keys and start Ubuntu Touch apps.
+This was made for the Volla Phone, where the fingerprint sensor emits key events for various actions.
+
+How to build:
+make CC=/path/to/crosscompiler
+
+To install:
+Copy the built binary to /home/phablet/ and keylistend.conf to /home/phablet/.config/upstart/, then reboot. Make sure to activate the FingerPrint HAL by doing anything which uses it. Example: go to Settings, Security, Fingerprint, Add new and tap until ~10%. Now go back to the home screen. From this point, tapping on the sensor should open the dialer app. To customize this, checkout the keylistend.conf and keylistend --help
